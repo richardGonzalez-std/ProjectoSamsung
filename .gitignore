@@ -7,7 +7,7 @@ projectoVenv/
 __pycache__/
 *.py[cod]
 *.pyo
-
+*.gitignore
 # Ignore Jupyter Notebook checkpoints
 .ipynb_checkpoints
 
