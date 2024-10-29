@@ -10,7 +10,7 @@ __pycache__/
 *.gitignore
 # Ignore Jupyter Notebook checkpoints
 .ipynb_checkpoints
-
+prueba.py
 # Ignore environment and dependency files
 *.env
 *.DS_Store
