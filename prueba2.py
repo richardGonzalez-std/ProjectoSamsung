@@ -5,7 +5,11 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import asyncio
 import os
-import hashlib
+import hvplot.pandas
+import holoviews as hv
+import panel as pn
+
+hv.extension('bokeh')
 class TeamScraper:
     def __init__(self):
         self.players_data = pd.DataFrame(columns=["Name","Value"])
@@ -48,28 +52,66 @@ class TeamScraper:
 
 class CSV_ReadIterator:
     def __init__(self) -> None:
-      self.data = None
+        self.data = None
     
-    def reader(self,path:str,sep:str)->pd.DataFrame:
-        file = pd.read_csv(path,sep=sep,low_memory=False)
-        self.data = file[['id','player','age','WinCL','nationality','position','games','league','goals','assists','value','shots_total','shots_on_target','goals_per_shot','xa','passes_completed']].head(10)
-        self.data = self.data.sort_values(by='goals',ascending=False)
-        return self.data
-    def read_csv_directory(self,directory:str)->list:
-        dataframes = []
-        for filenames in os.listdir(directory):
-            if filenames.endswith('.csv'):
-                path = os.path.join(directory,filenames)
-                df = self.reader(path=path,sep=';')
-                dataframes.append(df)
-        return dataframes
+    def reader(self, path: str, sep: str) -> hv.Bars:
+        # Read CSV and select relevant columns
+        file = pd.read_csv(path, sep=sep, low_memory=False)
+        self.data = file[['id', 'player', 'age', 'WinCL', 'nationality', 'position', 
+                          'games', 'league', 'goals', 'assists', 'value', 
+                          'shots_total', 'shots_on_target', 'goals_per_shot', 
+                          'xa', 'passes_completed']]
+        # Sort data by goals in descending order
+        self.data = self.data.sort_values(by='goals', ascending=False).head(10)
+        # Return a bar chart plot for the top 10 players by goals
+        return self.data.hvplot.table(columns=['player','position','goals','assists','value'], title="Top 10 Players by Goals")
+    def read_csv_directory(self, directory: str) -> hv.Layout:
+        visualizations = []
+        for filename in os.listdir(directory):
+            if filename.endswith('.csv'):
+                path = os.path.join(directory, filename)
+                # Generate and collect each visualization
+                plot = self.reader(path=path, sep=';')
+                visualizations.append(plot)
+        
+        # Combine all visualizations in a single layout
+        return hv.Layout(visualizations).cols(1)
+
+    def analyze_statistics(self):
+        # Asegurarse de que los datos están cargados
+        if self.data is None:
+            raise ValueError("No data loaded. Please load a CSV file first.")
+        
+        # 1. Calcular correlaciones de estadísticas con el valor de mercado
+        correlation_matrix = self.data[['age', 'games', 'goals', 'assists', 'value']].corr()
+        print("Correlación entre estadísticas y valor de mercado:")
+        print(correlation_matrix)
+
+        # 2. Distribución de valores de mercado por posición
+        position_market_value = self.data.groupby('position')['value'].mean()
+        print("\nValor de mercado promedio por posición:")
+        print(position_market_value)
+        
+        # 3. Análisis de valores por posición
+        print("\nAnálisis comparativo de estadísticas por posición:")
+        print(self.data.groupby('position')[['goals', 'assists', 'games', 'value']].mean())
+
+# Example usage
+csv_reader = CSV_ReadIterator()
+combined_visualization = csv_reader.read_csv_directory("soccer_data/")
+
+# Display the visualization using Panel
+pn.serve(combined_visualization)  # For a standalone app
 
        
         
 
-async def main():
+""""async def main():
     url = "https://www.transfermarkt.com/spieler-statistik/wertvollstespieler/marktwertetop"
-    print(CSV_ReadIterator().read_csv_directory('soccer_data/'))
+    csvReader = CSV_ReadIterator()
+    combined_visualization = csvReader.read_csv_directory('soccer_data/')
+    pn.serve(combined_visualization,show=True,blocking=True)
+    input("Press enter to exit.....\n")"""
 """    players_data = scraper.players_data
     players_data = players_data.rename(columns={"Name":'player',"Value":"current_value"})
     df = pd.read_csv("soccer_data/transfermarkt_fbref_201920.csv", sep=';')
@@ -82,7 +124,7 @@ async def main():
 
     
 
-asyncio.run(main())
+
 
 
 
