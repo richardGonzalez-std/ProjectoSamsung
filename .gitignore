@@ -2,15 +2,18 @@
 projectoVenv/
 
 projectoVenv/
-
+soccer_data/
 # Ignore Python cache files
 __pycache__/
+pandas_cheat_sheet.txt
 *.py[cod]
 *.pyo
-*.gitignore
+kaggle.json
+soccer-players-values-and-their-statistics.zip
+
 # Ignore Jupyter Notebook checkpoints
 .ipynb_checkpoints
-prueba.py
+*prueba.py
 # Ignore environment and dependency files
 *.env
 *.DS_Store
