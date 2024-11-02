@@ -2,7 +2,6 @@
 projectoVenv/
 
 projectoVenv/
-soccer_data/
 # Ignore Python cache files
 __pycache__/
 pandas_cheat_sheet.txt

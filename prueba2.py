@@ -57,44 +57,43 @@ class CSV_ReadIterator:
     def reader(self, path: str, sep: str) -> hv.Bars:
         # Read CSV and select relevant columns
         file = pd.read_csv(path, sep=sep, low_memory=False)
-        self.data = file[['id', 'player', 'age', 'WinCL', 'nationality', 'position', 
-                          'games', 'league', 'goals', 'assists', 'value', 
-                          'shots_total', 'shots_on_target', 'goals_per_shot', 
-                          'xa', 'passes_completed']]
+        self.data = file
         # Sort data by goals in descending order
-        self.data = self.data.sort_values(by='goals', ascending=False).head(10)
+        self.data = self.data.sort_values(by=['goals','position'], ascending=[False,False]).head(10)
         # Return a bar chart plot for the top 10 players by goals
-        return self.data.hvplot.table(columns=['player','position','goals','assists','value'], title="Top 10 Players by Goals")
+        return self.data.hvplot.table(columns=['player','position','goals','assists','WinCL','value'], title="Top 10 Players by Goals")
     def read_csv_directory(self, directory: str) -> hv.Layout:
         visualizations = []
+        visualizations_analysis = []
         for filename in os.listdir(directory):
             if filename.endswith('.csv'):
                 path = os.path.join(directory, filename)
                 # Generate and collect each visualization
                 plot = self.reader(path=path, sep=';')
+                #analysis = self.analyze_statistics()
                 visualizations.append(plot)
-        
+                #visualizations_analysis.append(analysis)
+
         # Combine all visualizations in a single layout
-        return hv.Layout(visualizations).cols(1)
+        return hv.Layout(items=visualizations).cols(1)
 
-    def analyze_statistics(self):
-        # Asegurarse de que los datos están cargados
-        if self.data is None:
-            raise ValueError("No data loaded. Please load a CSV file first.")
-        
-        # 1. Calcular correlaciones de estadísticas con el valor de mercado
-        correlation_matrix = self.data[['age', 'games', 'goals', 'assists', 'value']].corr()
-        print("Correlación entre estadísticas y valor de mercado:")
-        print(correlation_matrix)
+    """ def analyze_statistics(self)->pd.DataFrame:
+            # Asegurarse de que los datos están cargados
+            if self.data is None:
+                raise ValueError("No data loaded. Please load a CSV file first.")
+            
+            # 1. Calcular correlaciones de estadísticas con el valor de mercado
+            correlation_matrix = self.data[['age', 'games', 'goals', 'assists', 'value']].corr()
 
-        # 2. Distribución de valores de mercado por posición
-        position_market_value = self.data.groupby('position')['value'].mean()
-        print("\nValor de mercado promedio por posición:")
-        print(position_market_value)
-        
-        # 3. Análisis de valores por posición
-        print("\nAnálisis comparativo de estadísticas por posición:")
-        print(self.data.groupby('position')[['goals', 'assists', 'games', 'value']].mean())
+            # 2. Distribución de valores de mercado por posición
+            position_market_value = self.data.groupby('position')['value'].mean()
+            print("\nValor de mercado promedio por posición:")
+            print(position_market_value)
+            
+            # 3. Análisis de valores por posición
+            print("\nAnálisis comparativo de estadísticas por posición:")
+            groupedMean = self.data.groupby('position')[['goals', 'assists', 'games', 'value']].mean()
+            return pd.concat(data for data in [correlation_matrix,position_market_value,groupedMean])"""
 
 # Example usage
 csv_reader = CSV_ReadIterator()
