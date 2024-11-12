@@ -1,4 +1,6 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 class Players:
     def __init__(self, file_path="Players.csv"):
@@ -32,7 +34,7 @@ class Players:
         return result, list_of_capacity
 
     def get_player_data(self):
-        # Return the basic player data and evaluation metrics
+        # Collect player evaluation results
         results = []
         for fila in range(len(self.data)):
             result, capacities = self.evaluate_player(fila)
@@ -44,4 +46,16 @@ class Players:
                 "Value Change": result
             }
             results.append(player_info)
-        return pd.DataFrame(results)
+
+        # Create DataFrame
+        df = pd.DataFrame(results)
+        # Convert "up" and "down" to numeric values
+        df["Value Change"] = df["Value Change"].map({"up": 1, "down": -1})
+
+        # Generate plot
+        fig, ax = plt.subplots()
+        df.plot(kind='line', x='Player', y='Value Change', ax=ax, color='red')
+        ax.set_title('Changing Market Value')
+        ax.set_xlabel('Player')
+        ax.set_ylabel('Value Change')
+        return fig

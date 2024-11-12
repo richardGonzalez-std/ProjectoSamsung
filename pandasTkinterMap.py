@@ -1,70 +1,52 @@
 import tkinter as tk
 from tkinter import ttk
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import pandas as pd
-from Players_class import Players  # Import the modified Players class
+import os
+from prueba2 import CSV_ReadIterator
+from Players_class import Players
 
-# Initialize the Players class
-players_data = Players("Players.csv")
-player_summary = players_data.get_player_data()
+# Instantiate CSV_ReadIterator
+csv_reader = CSV_ReadIterator()
 
 # Tkinter setup
 root = tk.Tk()
-root.title("Player Evaluation")
+root.title("Data Visualization")
 root.geometry("800x600")
-
+style = ttk.Style()
+style.configure('TLabel',font=("Arial", 16, "bold"), fg="blue")
 # Create Notebook
 notebook = ttk.Notebook(root)
-notebook.pack(expand=True, fill="both")
 
-# Add a summary tab with player evaluation data
-def add_summary_tab():
-    summary_tab = ttk.Frame(notebook)
-    notebook.add(summary_tab, text="Summary")
+def load_notebook():
+    summary_frame.destroy()
+    summary_label.pack_forget()
+    create_nootebook_button.pack_forget()
+    notebook.pack(expand=True, fill="both")
 
-    # Create a figure for the summary data
-    fig, ax = plt.subplots(figsize=(8, 5))
-    ax.axis("tight")
-    ax.axis("off")
-    ax.table(cellText=player_summary.values, colLabels=player_summary.columns, cellLoc="center", loc="center")
-    
-    # Embed the figure in the tab
-    canvas = FigureCanvasTkAgg(fig, summary_tab)
-    canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-    canvas.draw()
 
-# Add individual evaluation tabs for each metric
-def add_evaluation_tabs():
-    metrics = ["Age", "Goals", "Assists"]
-    for metric in metrics:
-        metric_tab = ttk.Frame(notebook)
-        notebook.add(metric_tab, text=f"{metric} Evaluation")
+    add_tab_button.pack(pady=10)
+    # Function to add a new tab with a plot for each CSV file in the directory
 
-        # Generate the evaluation plot for each metric
-        fig, ax = plt.subplots()
-        if metric == "Age":
-            down_values = player_summary["Age"] > 30
-            ax.bar(player_summary["Player"], down_values, color="red")
-            ax.set_title("Age Evaluation: Red = Decrease in Value")
-        elif metric == "Goals":
-            down_values = player_summary["Goals"] < players_data.promedio_goles
-            ax.bar(player_summary["Player"], down_values, color="blue")
-            ax.set_title("Goals Evaluation: Blue = Decrease in Value")
-        elif metric == "Assists":
-            down_values = player_summary["Assists"] < players_data.promedio_asistencias
-            ax.bar(player_summary["Player"], down_values, color="green")
-            ax.set_title("Assists Evaluation: Green = Decrease in Value")
-        ax.set_xlabel("Player")
-        ax.set_ylabel("Value Change Indicator")
-
-        # Embed the figure in the tab
-        canvas = FigureCanvasTkAgg(fig, metric_tab)
+def add_new_tabs():
+        #playersList = players()
+        new_tab = ttk.Frame(notebook,width=300,height=300)
+        notebook.add(new_tab,text=f'Pestaña Jugadores')
+        fig = Players().get_player_data()
+        # Embed Matplotlib figure in the current tab
+        canvas = FigureCanvasTkAgg(fig, new_tab)
         canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
         canvas.draw()
+    
 
-# Add the tabs to the notebook
-add_summary_tab()
-add_evaluation_tabs()
+
+summary_frame = ttk.Frame(root)
+summary_label = ttk.Label(root,text='Este el proyecto de analisis de jugadores en base a su valor futuro',style='TLabel')
+summary_frame.pack(pady=5)
+summary_label.pack(pady=40)
+# Button to add tabs with plots for each CSV file
+
+add_tab_button = ttk.Button(root, text="Add Tabs for All CSVs", command=add_new_tabs)
+create_nootebook_button = ttk.Button(root,text='open Charts',command=load_notebook)
+create_nootebook_button.pack(pady=10)
 
 root.mainloop()
