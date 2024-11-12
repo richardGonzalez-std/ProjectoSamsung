@@ -19,12 +19,15 @@ notebook.pack(expand=True, fill="both")
 # Function to add new tab with a plot
 def add_new_tab():
     new_tab = ttk.Frame(notebook)
-    notebook.add(new_tab, text=f"Tab {notebook.index('end') + 1}")
-
-    # Get the next CSV file in the directory (for demonstration purposes)
     directory = "soccer_data/"
     csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
     if csv_files:
+        print(csv_files)
+        for i in range(len(csv_files)):
+            notebook.add(new_tab,text=f" Tab {csv_files[i]}")
+
+    # Get the next CSV file in the directory (for demonstration purposes)
+    
         # Use the first CSV file in the directory
         csv_path = os.path.join(directory, csv_files[0])
         fig = csv_reader.reader(csv_path, sep=';')  # Generate the Matplotlib figure

@@ -58,10 +58,10 @@ class CSV_ReadIterator:
         self.data = file.sort_values(by=['goals','position'], ascending=[False,False]).head(10)
         # Return a bar chart plot for the top 10 players by goals
         fig, ax = plt.subplots()
-        self.data.plot(kind='bar',x='player',y='goals',ax=ax,color='skyblue')
+        self.data.plot(kind='bar',y='goals',y='players',ax=ax,color='skyblue')
         ax.set_title("Top 10 Player by Goals")
-        ax.set_xlabel('Players')
-        ax.set_ylabel('Goals')
+        ax.set_xlabel('Goals')
+        ax.set_ylabel('Players')
         return fig
     
     def analyze_statistics(self)->pd.DataFrame:
