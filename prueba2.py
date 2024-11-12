@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
+import Players_class
 
 class TeamScraper:
     def __init__(self):
@@ -51,14 +51,14 @@ class CSV_ReadIterator:
     def __init__(self) -> None:
         self.data = None
     
-    def reader(self, path: str, sep: str):
+    def reader(self):
         # Read CSV and select relevant columns
-        file = pd.read_csv(path, sep=sep, low_memory=False)
+        file = Players_class.players().data
         # Sort data by goals in descending order
-        self.data = file.sort_values(by=['goals','position'], ascending=[False,False]).head(10)
+        self.data = file.sort_values(by=['Goals','Player_name'], ascending=[False,False]).head(5)
         # Return a bar chart plot for the top 10 players by goals
         fig, ax = plt.subplots()
-        self.data.plot(kind='barh',x='player',y='goals',ax=ax,color='skyblue')
+        self.data.plot(kind='barh',x='Player_name',y='Goals',ax=ax,color='skyblue')
         ax.set_title("Top 10 Player by Goals")
         ax.set_xlabel('Players')
         ax.set_ylabel('Goals')
