@@ -48,13 +48,13 @@ class Players:
             results.append(player_info)
 
         # Create DataFrame
-        df = pd.DataFrame(results)
+        df = pd.DataFrame(results).head(5)
         # Convert "up" and "down" to numeric values
         df["Value Change"] = df["Value Change"].map({"up": 1, "down": -1})
 
         # Generate plot
         fig, ax = plt.subplots()
-        df.plot(kind='line', x='Player', y='Value Change', ax=ax, color='red')
+        df.plot(kind='bar', x='Player', y='Value Change', ax=ax, color='red')
         ax.set_title('Changing Market Value')
         ax.set_xlabel('Player')
         ax.set_ylabel('Value Change')
