@@ -58,13 +58,13 @@ class CSV_ReadIterator:
         self.data = file.sort_values(by=['goals','position'], ascending=[False,False]).head(10)
         # Return a bar chart plot for the top 10 players by goals
         fig, ax = plt.subplots()
-        self.data.plot(kind='bar',y='goals',y='players',ax=ax,color='skyblue')
+        self.data.plot(kind='barh',x='player',y='goals',ax=ax,color='skyblue')
         ax.set_title("Top 10 Player by Goals")
-        ax.set_xlabel('Goals')
-        ax.set_ylabel('Players')
+        ax.set_xlabel('Players')
+        ax.set_ylabel('Goals')
         return fig
     
-    def analyze_statistics(self)->pd.DataFrame:
+    def analyze_statistics(self):
             # Asegurarse de que los datos están cargados
             if self.data is None:
                 raise ValueError("No data loaded. Please load a CSV file first.")

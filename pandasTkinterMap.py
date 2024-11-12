@@ -11,34 +11,47 @@ csv_reader = CSV_ReadIterator()
 root = tk.Tk()
 root.title("Data Visualization")
 root.geometry("800x600")
-
+style = ttk.Style()
+style.configure('TLabel',font=("Arial", 16, "bold"), fg="blue")
 # Create Notebook
 notebook = ttk.Notebook(root)
-notebook.pack(expand=True, fill="both")
 
-# Function to add new tab with a plot
-def add_new_tab():
-    new_tab = ttk.Frame(notebook)
-    directory = "soccer_data/"
-    csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
-    if csv_files:
-        print(csv_files)
-        for i in range(len(csv_files)):
-            notebook.add(new_tab,text=f" Tab {csv_files[i]}")
+def load_notebook():
+    summary_frame.destroy()
+    summary_label.pack_forget()
+    create_nootebook_button.pack_forget()
+    notebook.pack(expand=True, fill="both")
 
-    # Get the next CSV file in the directory (for demonstration purposes)
-    
-        # Use the first CSV file in the directory
-        csv_path = os.path.join(directory, csv_files[0])
-        fig = csv_reader.reader(csv_path, sep=';')  # Generate the Matplotlib figure
 
-        # Embed Matplotlib figure in Tkinter tab
-        canvas = FigureCanvasTkAgg(fig, new_tab)
-        canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-        canvas.draw()
+    add_tab_button.pack(pady=10)
+    # Function to add a new tab with a plot for each CSV file in the directory
 
-# Button to add a new tab with a plot
-add_tab_button = ttk.Button(root, text="Add New Tab", command=add_new_tab)
-add_tab_button.pack(pady=10)
+def add_new_tabs():
+        directory = "soccer_data/"
+        csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
+
+        for i, csv_file in enumerate(csv_files):
+            # Create a new frame for each tab
+            new_tab = ttk.Frame(notebook, width=100, height=100)
+            notebook.add(new_tab, text=f"Tab {csv_file}")
+
+            # Generate the Matplotlib figure for the current CSV file
+            csv_path = os.path.join(directory, csv_file)
+            fig = csv_reader.reader(csv_path, sep=';')
+
+            # Embed Matplotlib figure in the current tab
+            canvas = FigureCanvasTkAgg(fig, new_tab)
+            canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+            canvas.draw()
+
+summary_frame = ttk.Frame(root)
+summary_label = ttk.Label(root,text='Este el proyecto de analisis de jugadores en base a su valor futuro',style='TLabel')
+summary_frame.pack(pady=5)
+summary_label.pack(pady=40)
+# Button to add tabs with plots for each CSV file
+
+add_tab_button = ttk.Button(root, text="Add Tabs for All CSVs", command=add_new_tabs)
+create_nootebook_button = ttk.Button(root,text='open Charts',command=load_notebook)
+create_nootebook_button.pack(pady=10)
 
 root.mainloop()
