@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.pyplot as plt
 import os
 from prueba2 import CSV_ReadIterator
 from Players_class import Players
@@ -22,7 +23,13 @@ def load_notebook():
     summary_label.pack_forget()
     create_nootebook_button.pack_forget()
     notebook.pack(expand=True, fill="both")
-
+    new_tab = ttk.Frame(notebook,width=300,height=300)
+    notebook.add(new_tab,text=f'Valores de Mercado')
+    fig = Players().get_player_data()
+    # Embed Matplotlib figure in the current tab
+    canvas = FigureCanvasTkAgg(fig, new_tab)
+    canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+    canvas.draw()
 
     add_tab_button.pack(pady=10)
     # Function to add a new tab with a plot for each CSV file in the directory
@@ -30,12 +37,17 @@ def load_notebook():
 def add_new_tabs():
         #playersList = players()
         new_tab = ttk.Frame(notebook,width=300,height=300)
-        notebook.add(new_tab,text=f'Pestaña Jugadores')
-        fig = Players().get_player_data()
-        # Embed Matplotlib figure in the current tab
-        canvas = FigureCanvasTkAgg(fig, new_tab)
-        canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        notebook.add(new_tab,text='Tabla jugadores')
+        playersDf = Players().data[['Player_name','Age','Goals']].head(10)
+        playersDf.rename(columns={"Player_name":'Nombre de Jugador','Age':'Edad','Goals':'Goles'},inplace=True)
+        fig,ax= plt.subplots()
+        ax.axis('off')
+        table = ax.table(cellText=playersDf.values,colLabels=playersDf.columns,cellLoc='center',loc='center')
+        canvas = FigureCanvasTkAgg(fig,new_tab)
+        canvas.get_tk_widget().pack(fill=tk.BOTH,expand=True)
         canvas.draw()
+
+
     
 
 
