@@ -25,7 +25,7 @@ def load_notebook():
     notebook.pack(expand=True, fill="both")
     new_tab = ttk.Frame(notebook,width=300,height=300)
     notebook.add(new_tab,text=f'Valores de Mercado')
-    fig = Players().get_player_data()
+    fig,df = Players().get_player_data()
     # Embed Matplotlib figure in the current tab
     canvas = FigureCanvasTkAgg(fig, new_tab)
     canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
@@ -36,10 +36,11 @@ def load_notebook():
 
 def add_new_tabs():
         #playersList = players()
-        new_tab = ttk.Frame(notebook,width=300,height=300)
+        new_tab = ttk.Frame(notebook,width=300,height=600)
         notebook.add(new_tab,text='Tabla jugadores')
-        playersDf = Players().data[['Player_name','Age','Goals']].head(10)
-        playersDf.rename(columns={"Player_name":'Nombre de Jugador','Age':'Edad','Goals':'Goles'},inplace=True)
+        figure,playersDf = Players().get_player_data()
+    
+        playersDf.rename(columns={"Player":'Nombre de Jugador','Age':'Edad','Goals':'Goles'},inplace=True)
         fig,ax= plt.subplots()
         ax.axis('off')
         table = ax.table(cellText=playersDf.values,colLabels=playersDf.columns,cellLoc='center',loc='center')

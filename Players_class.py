@@ -58,4 +58,4 @@ class Players:
         ax.set_title('Changing Market Value')
         ax.set_xlabel('Player')
         ax.set_ylabel('Value Change')
-        return fig
+        return fig,df
