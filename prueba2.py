@@ -3,13 +3,10 @@
 import aiohttp
 from bs4 import BeautifulSoup
 import pandas as pd
-import asyncio
-import os
-import hvplot.pandas
-import holoviews as hv
-import panel as pn
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-hv.extension('bokeh')
+
 class TeamScraper:
     def __init__(self):
         self.players_data = pd.DataFrame(columns=["Name","Value"])
@@ -54,29 +51,19 @@ class CSV_ReadIterator:
     def __init__(self) -> None:
         self.data = None
     
-    def reader(self, path: str, sep: str) -> hv.Bars:
+    def reader(self, path: str, sep: str):
         # Read CSV and select relevant columns
         file = pd.read_csv(path, sep=sep, low_memory=False)
-        self.data = file
         # Sort data by goals in descending order
-        self.data = self.data.sort_values(by=['goals','position'], ascending=[False,False]).head(10)
+        self.data = file.sort_values(by=['goals','position'], ascending=[False,False]).head(10)
         # Return a bar chart plot for the top 10 players by goals
-        return self.data.hvplot.table(columns=['player','position','goals','assists','WinCL','value'], title="Top 10 Players by Goals")
-    def read_csv_directory(self, directory: str) -> hv.Layout:
-        visualizations = []
-        visualizations_analysis = []
-        for filename in os.listdir(directory):
-            if filename.endswith('.csv'):
-                path = os.path.join(directory, filename)
-                # Generate and collect each visualization
-                plot = self.reader(path=path, sep=';')
-                #analysis = self.analyze_statistics()
-                visualizations.append(plot)
-                #visualizations_analysis.append(analysis)
-
-        # Combine all visualizations in a single layout
-        return hv.Layout(items=visualizations).cols(1)
-
+        fig, ax = plt.subplots()
+        self.data.plot(kind='bar',x='player',y='goals',ax=ax,color='skyblue')
+        ax.set_title("Top 10 Player by Goals")
+        ax.set_xlabel('Players')
+        ax.set_ylabel('Goals')
+        return fig
+    
     def analyze_statistics(self)->pd.DataFrame:
             # Asegurarse de que los datos están cargados
             if self.data is None:
@@ -95,10 +82,8 @@ class CSV_ReadIterator:
             groupedMean = self.data.groupby('position')[['goals', 'assists', 'games', 'value']].mean()
             return pd.concat(data for data in [correlation_matrix,position_market_value,groupedMean])
 
-# Example usage
-csv_reader = CSV_ReadIterator()
-combined_visualization = csv_reader.read_csv_directory("soccer_data/")
-print()
+
+
 # Display the visualization using Panel
 #pn.serve(combined_visualization)  # For a standalone app
 
