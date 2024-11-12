@@ -77,7 +77,7 @@ class CSV_ReadIterator:
         # Combine all visualizations in a single layout
         return hv.Layout(items=visualizations).cols(1)
 
-    """ def analyze_statistics(self)->pd.DataFrame:
+    def analyze_statistics(self)->pd.DataFrame:
             # Asegurarse de que los datos están cargados
             if self.data is None:
                 raise ValueError("No data loaded. Please load a CSV file first.")
@@ -93,14 +93,14 @@ class CSV_ReadIterator:
             # 3. Análisis de valores por posición
             print("\nAnálisis comparativo de estadísticas por posición:")
             groupedMean = self.data.groupby('position')[['goals', 'assists', 'games', 'value']].mean()
-            return pd.concat(data for data in [correlation_matrix,position_market_value,groupedMean])"""
+            return pd.concat(data for data in [correlation_matrix,position_market_value,groupedMean])
 
 # Example usage
 csv_reader = CSV_ReadIterator()
 combined_visualization = csv_reader.read_csv_directory("soccer_data/")
-
+print()
 # Display the visualization using Panel
-pn.serve(combined_visualization)  # For a standalone app
+#pn.serve(combined_visualization)  # For a standalone app
 
        
         
