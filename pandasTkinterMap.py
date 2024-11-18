@@ -35,7 +35,7 @@ class PlayerApp:
         header_label = ttk.Label(
             self.resume_frame,
             text='Bienvenido al Analisis de datos de los jugadores',
-            bootstyle = 'primary',
+            bootstyle = 'danger',
             background='black',
             font=('Helvetica',36,'bold')
         )
@@ -46,7 +46,7 @@ class PlayerApp:
             text = ('\tEsta aplicación provee un analisís profundo de las estadísticas de los jugadores. \n'
             "Explora metricas,tendencias, y datos acerca de los jugadores de futbol a traves de estas gráficas\n"
             ),
-            bootstyle='info',
+            bootstyle='danger',
             background='black',
             font=('Helvetica',18)
         )
@@ -59,6 +59,7 @@ class PlayerApp:
                   '\tVictor\n'
                   '\tLuis\n'),
             background='black',
+            bootstyle='danger',
             font=('Helvetica',24,'italic')
         )
         creator_label.pack(pady=50)
