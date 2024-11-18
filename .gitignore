@@ -7,6 +7,7 @@ __pycache__/
 pandas_cheat_sheet.txt
 *.py[cod]
 *.pyo
+*.ipynb
 kaggle.json
 soccer-players-values-and-their-statistics.zip
 
