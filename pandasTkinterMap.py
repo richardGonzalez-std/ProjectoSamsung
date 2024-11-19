@@ -1,7 +1,6 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import matplotlib.pyplot as plt
 from Players_class import Players
 
 class PlayerApp:
