@@ -5,30 +5,37 @@ from Players_class import Players
 
 class PlayerApp:
     def __init__(self, root):
+        '''
+        Esta es la función de inicialización de la clase PlayerApp. Configura la ventana principal, define el tamaño de pantalla,
+        habilita el modo de pantalla completa, aplica el estilo visual, y crea el marco de presentación inicial (resume_frame).
+        '''
         self.root = root
-        self.root.title("Player Data Analysis")
+        self.root.title("Analisis de Jugadores")
 
-        # Get the screen dimensions
-        self.screen_width = root.winfo_screenwidth()
-        self.screen_height = root.winfo_screenheight()
+        # Obtener el tamaño de la pantalla
 
-        # Calculate the x and y coordinates for the window to be centered
 
-        # Set the geometry of the window
-        root.geometry(f"{self.screen_width}x{self.screen_height}")
-        root.attributes('-fullscreen',True)
-
+        # 
+        root.geometry('1200x800')
+        root.bind('<F12>',self.open_in_fullscreen)
+        root.bind('<Escape>',self.escape_fullscreen)
+       
         self.style = ttk.Style("darkly")  # Applying a modern dark theme.
         self.style.configure("TFrame", background="black")
-
+        
         self.create_resume_frame()
 
+    def open_in_fullscreen(self,event):
+        self.root.attributes('-fullscreen',True)
     def create_resume_frame(self):
         """
-        Create the initial presentation frame
+        Crea el marco inicial de presentación que incluye un encabezado, una breve descripción del programa,
+        una sección de agradecimientos con los nombres de los creadores, y botones para interactuar con la aplicación,
+        como abrir el panel de análisis o mostrar información adicional.
+
         """
 
-        self.resume_frame = ttk.Frame(self.root,padding=20)
+        self.resume_frame = ttk.Frame(self.root,padding=0)
         self.resume_frame.pack(fill=ttk.BOTH,expand=True)
 
         header_label = ttk.Label(
@@ -36,9 +43,10 @@ class PlayerApp:
             text='Bienvenido al Analisis de datos de los jugadores',
             bootstyle = 'danger',
             background='black',
-            font=('Helvetica',36,'bold')
+            font=('Helvetica',36,'bold'),
+            padding=0
         )
-        header_label.pack(pady=20)
+        header_label.pack(pady=5,padx=10)
 
         description_label = ttk.Label(
             self.resume_frame,
@@ -59,9 +67,9 @@ class PlayerApp:
                   '\tLuis\n'),
             background='black',
             bootstyle='danger',
-            font=('Helvetica',24,'italic')
+            font=('Helvetica',24,'bold')
         )
-        creator_label.pack(pady=50)
+        creator_label.pack(pady=50,after=description_label)
         button_frame = ttk.Frame(self.resume_frame)
         button_frame.pack(pady=20)
 
@@ -79,15 +87,7 @@ class PlayerApp:
             bootstyle="info",
             command=self.show_more_info
         )
-        more_info_button.pack(side=LEFT, padx=10)
-
-        greetings_button = ttk.Button(
-            button_frame,
-            text="Greetings!",
-            bootstyle="secondary",
-            command=self.show_greetings
-        )
-        greetings_button.pack(side=LEFT, padx=10)
+        more_info_button.pack(side=LEFT, padx=40)
 
         # Footer section
         footer_label = ttk.Label(
@@ -100,10 +100,13 @@ class PlayerApp:
 
     def show_more_info(self):
         """
-        Show additional information about the program in a pop-up window.
+        Muestra una ventana emergente con información adicional sobre el propósito y las características del programa.
+        Incluye un botón para cerrar esta ventana.
+
+
         """
         info_window = ttk.Toplevel(self.root)
-        info_window.title("More Information")
+        info_window.title("Mas info")
         info_window.geometry("1000x400")
 
         info_label = ttk.Label(
@@ -125,12 +128,12 @@ class PlayerApp:
         )
         close_button.pack(pady=10)
 
-    def show_greetings(self):
+    '''def show_greetings(self):
         """
         Display a greeting message in a pop-up window.
         """
         greeting_window = ttk.Toplevel(self.root)
-        greeting_window.title("Greetings")
+        greeting_window.title("Agradecimientos")
         greeting_window.geometry("800x200")
 
         greeting_label = ttk.Label(
@@ -138,25 +141,22 @@ class PlayerApp:
             text="Hello! Thank you for using the Player Data Analysis App!",
             bootstyle="success",
             font=("Helvetica", 16)
-        )
-        greeting_label.pack(pady=20)
-
-        close_button = ttk.Button(
-            greeting_window,
-            text="Close",
-            bootstyle="secondary",
-            command=greeting_window.destroy
-        )
-        close_button.pack(pady=10)
+        )'''
+        
 
     def load_notebook(self):
+        '''
+        Elimina el marco inicial (resume_frame) y carga el cuaderno de pestañas (notebook). 
+        Inicia la barra de progreso para indicar que se están cargando los datos.
+        Llama al método check_data_ready para verificar si los datos están listos.
+        '''
         self.resume_frame.destroy()
         self.notebook = ttk.Notebook(self.root, bootstyle="dark")
         self.notebook.pack(fill=BOTH, expand=True)
         self.style.configure('TLabel',font=('Helvetica',32,'bold'))
         self.status_progressBar = ttk.Progressbar(bootstyle="info-striped")
-        self.text_progressBar = ttk.Label(master=self.notebook,text='Loading Data......',bootstyle='info',style='TLabel').place(x=700,y=(self.screen_height//2)-100)
-        self.status_progressBar.place(x=100,y=(self.screen_height//2),width=self.screen_width-200)
+        self.text_progressBar = ttk.Label(master=self.notebook,text='Loading Data......',bootstyle='info',style='TLabel').place(x=self.root.winfo_width()/4,y=(self.root.winfo_height()//2)-100)
+        self.status_progressBar.place(x=self.root.winfo_width()-(self.root.winfo_width()-100),y=(self.root.winfo_height()//2),width=self.root.winfo_width()-200)
        
 
         self.players = Players()  # Initialize Players class
@@ -164,7 +164,9 @@ class PlayerApp:
 
     def apply_chart_style(self,ax):
         """
-        Apply custom styles to a matplotlib chart.
+        Aplica un estilo personalizado a las gráficas de Matplotlib,
+        como colores de fondo, etiquetas, y bordes de los ejes. 
+        Esto asegura que las gráficas sean consistentes con el tema oscuro de la aplicación.
         """
         ax.set_facecolor("none")
         ax.title.set_color("black")
@@ -173,9 +175,14 @@ class PlayerApp:
         ax.tick_params(axis="both", colors="black")
         for spine in ax.spines.values():
             spine.set_edgecolor("black")
+            
+    def escape_fullscreen(self,event):
+        self.root.attributes('-fullscreen',False)
+
     def check_data_ready(self):
         """
-        Periodically check if the Players instance has finished scraping.
+        Comprueba periódicamente si la clase Players ha terminado de procesar los datos. Si no están listos, mantiene activa la barra de progreso. 
+        Si los datos están listos, destruye la barra de progreso y llama al método add_tabs para mostrar las pestañas con las gráficas.
         """
         if not self.players.scraping_done:
             self.status_progressBar.start()
@@ -186,7 +193,8 @@ class PlayerApp:
 
     def add_tabs(self):
         """
-        Create tabs for each analysis/visualization figure.
+        Crea una pestaña para cada análisis o visualización de datos. 
+        Llama a add_tab para añadir cada pestaña con su respectiva figura.
         """
         self.add_tab("Player Value Change", self.players.get_player_data)
         self.add_tab("Historical Trends", self.players.analyze_historical_trends)
@@ -196,11 +204,12 @@ class PlayerApp:
         self.add_tab("Player Consistency", self.players.player_consistency)
     def add_tab(self, title, figure_method):
         """
-        Add a tab with the specified title and figure from the given method.
+        Crea una nueva pestaña en el cuaderno y genera una figura utilizando un método específico de la clase Players. 
+        Aplica el estilo personalizado a la gráfica y la inserta en la pestaña.
         """
         tab = ttk.Frame(self.notebook, style='TFrame')
         self.notebook.add(tab, text=title)
-
+        tab.pack_propagate(False)
         # Create the figure
         fig, _ = figure_method()
 
@@ -210,15 +219,21 @@ class PlayerApp:
 
     def embed_figure(self, tab, figure):
         """
-        Embed a Matplotlib figure in the given tab.
+        Inserta una figura de Matplotlib en una pestaña específica.
+        Utiliza la clase FigureCanvasTkAgg para integrar la gráfica dentro de la interfaz de usuario de Tkinter.
         """
         canvas = FigureCanvasTkAgg(figure, tab)
-        canvas.get_tk_widget().pack(fill=BOTH, expand=True)
-        canvas.draw()
+        canvas_widget = canvas.get_tk_widget()
+        canvas_widget.pack(fill=BOTH, expand=True)
+        canvas.draw_idle()
+        # Bind a resize event to handle resizing the figure dynamically
 
+
+        
 
 # Main application setup
 if __name__ == "__main__":
     root = ttk.Window(themename="darkly")
     app = PlayerApp(root)
+    root.bind()
     root.mainloop()
