@@ -25,6 +25,22 @@ class PlayerApp:
         
         self.create_resume_frame()
 
+    def center_window(self,window):
+        """
+        Basado en https://stackoverflow.com/a/10018670.
+        """
+        window.update_idletasks()
+        width = window.winfo_width()
+        frm_width = window.winfo_rootx() - window.winfo_x()
+        win_width = width + 2*frm_width
+        height = window.winfo_height()
+        titlebar_height = window.winfo_rooty() - window.winfo_y()
+        win_height = height + titlebar_height + frm_width
+        x = window.winfo_screenwidth()//2 - win_width//2
+        y = window.winfo_screenheight()//2 - win_height//2
+        window.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+        window.deiconify()
+
     def open_in_fullscreen(self,event):
         self.root.attributes('-fullscreen',True)
     def create_resume_frame(self):
@@ -106,14 +122,19 @@ class PlayerApp:
 
         """
         info_window = ttk.Toplevel(self.root)
+        self.center_window(info_window)
         info_window.title("Mas info")
         info_window.geometry("1000x400")
+
 
         info_label = ttk.Label(
             info_window,
             text=(
-                "This program is designed to analyze player statistics using data scraping and \n"
-                "visualization techniques. You can explore trends, performance metrics, and much more!"
+                "El proyecto en cuestión tiene como premisa establecer a través de modelos lógico/matemáticos\n"
+                "un medio de análisis, en este caso, para un mercado en particular\n el mercado en cuestión es el deportivo."
+                "Se enfoco directamente al mercado\n del fútbol masculino, tomando en cuenta un análisis previo de los jugadores\n y sus valores de mercado actuales.\n"
+                "Se plantea conseguir un medio por el cual, determinar si el desempeño de un jugador puede \ninfluir dentro de su valoración futura.\n"
+
             ),
             bootstyle="info",
             font=("Helvetica", 16)
@@ -155,7 +176,7 @@ class PlayerApp:
         self.notebook.pack(fill=BOTH, expand=True)
         self.style.configure('TLabel',font=('Helvetica',32,'bold'))
         self.status_progressBar = ttk.Progressbar(bootstyle="info-striped")
-        self.text_progressBar = ttk.Label(master=self.notebook,text='Loading Data......',bootstyle='info',style='TLabel').place(x=self.root.winfo_width()/4,y=(self.root.winfo_height()//2)-100)
+        self.text_progressBar = ttk.Label(master=self.notebook,text='Loading Data......',bootstyle='info',style='TLabel').place(x=self.root.winfo_width()-(self.root.winfo_width()-450),y=(self.root.winfo_height()//2)-100)
         self.status_progressBar.place(x=self.root.winfo_width()-(self.root.winfo_width()-100),y=(self.root.winfo_height()//2),width=self.root.winfo_width()-200)
        
 
@@ -235,5 +256,5 @@ class PlayerApp:
 if __name__ == "__main__":
     root = ttk.Window(themename="darkly")
     app = PlayerApp(root)
-    root.bind()
+    app.center_window(root)
     root.mainloop()
