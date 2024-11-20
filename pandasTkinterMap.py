@@ -16,7 +16,7 @@ class PlayerApp:
 
 
         # 
-        root.geometry('1200x800')
+        root.geometry('1600x800')
         root.bind('<F12>',self.open_in_fullscreen)
         root.bind('<Escape>',self.escape_fullscreen)
        
